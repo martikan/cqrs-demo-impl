@@ -1,0 +1,35 @@
+server:
+  port: ${PORT:8080}
+  servlet:
+    context-path: /api
+
+groupId: account-query-groupid-${GROUP_ID:1}
+
+spring:
+  application:
+    name: account.query-api
+  datasource:
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USER}
+    password: ${DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    enabled: true
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    change-log: classpath:db/changelog/changelog-master.yaml
+  kafka:
+    listener:
+      ack-mode: manual_immediate
+    consumer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER}
+      group-id: ${groupId}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      auto-offset-reset: earliest
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: '*'
